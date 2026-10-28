@@ -36,7 +36,8 @@ python -m unittest discover -s tests -v
 - **Read check:** `get_bid` returned `found: true`, `price: 4800`, `decision: PENDING` before evaluation.
 - **Signed buyer `award`:** finalized, GenVM SUCCESS, consensus Accepted; TX `0xe27f457e099218058338338f0594b4f1b25d42c2033e1e77b7278fc24c1a91e1`.
 - **Finalized-state readback:** `get_request("BIDSEAL-TEST-001")` returned `AWARDED` with awarded bidder `0xD6b8A3A5eB329410D9504784812b8569afA8C2aF` (builder-provided Studio response).
-- **Still pending:** unauthorized/contradictory/over-budget negative tests and reviewer demo. A separate `get_bid` readback after evaluation is recommended.
+- **Negative AI adjudication:** TEST-002 vendor price 4500 with explicit refusal of 12-month warranty → `INELIGIBLE` (finalized, GenVM SUCCESS, consensus Accepted, Equivalence output `INELIGIBLE`; finalized `get_bid` confirms persisted state).
+- **Still pending:** attempted award of TEST-002 must be rejected, unauthorized call checks, over-budget deterministic check, reviewer demo, and a separate TEST-001 `get_bid` readback after evaluation.
 - **Full receipts:** [Live evidence and test plan](docs/LIVE_EVIDENCE.md).
 
 ## Studio acceptance checklist
@@ -49,6 +50,7 @@ python -m unittest discover -s tests -v
 - [x] `evaluate_bid` succeeds with actual validator consensus and `ELIGIBLE`
 - [x] Buyer successfully calls `award` in a signed, finalized transaction
 - [x] Finalized `get_request` shows `AWARDED` with correct awarded bidder
-- [ ] Unauthorized award, over-budget and contradictory terms are rejected
+- [x] TEST-002 contradictory warranty terms evaluated `INELIGIBLE` with signed consensus and finalized readback
+- [ ] TEST-002 attempted award rejected; unauthorized calls and over-budget bids rejected
 
 See [SECURITY.md](SECURITY.md). MIT licensed. **Do not claim production or Season 2 acceptance before live evidence.**
