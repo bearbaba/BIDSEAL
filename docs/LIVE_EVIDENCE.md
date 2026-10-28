@@ -1,6 +1,6 @@
 # BIDSEAL V1 — Live Studionet acceptance evidence
 
-This document records blockchain transaction details supplied by the project builder on **28 October 2026**, pending independent explorer cross-check. This is evidence for the **new BIDSEAL V1 instance** (after the address-key bugfix), not the superseded broken instance.
+This document records blockchain transaction details supplied by the project builder on **28 October 2026**, some Explorer transaction links still pending independent cross-check. This is evidence for the **new BIDSEAL V1 instance** (after the address-key bugfix), not the superseded broken instance.
 
 ## Contract
 
@@ -28,9 +28,9 @@ This document records blockchain transaction details supplied by the project bui
 | TEST-002 `submit_bid` (vendor) | FINALIZED, GenVM SUCCESS; price 4500, explicit NO hardware warranty | `0x624706106d0bfa8f264b73288f36c22c4a35b589d89925faecc684d081e2af90` |
 | TEST-002 `evaluate_bid` (vendor) | FINALIZED, GenVM SUCCESS, consensus Accepted; return `INELIGIBLE` and Equivalence Principle `INELIGIBLE` | `0x91ff50c6b87e4c06ccf0c801a4c2e0965647ed9e6bee8126d3350a03336530cf` |
 | TEST-002 finalized `get_bid` | `found: true`, `price: 4500`, `decision: INELIGIBLE` | Readback supplied by builder on 28 Oct 2026 |
-| TEST-002 attempted `award` for INELIGIBLE bid | Expected execution rejection observed: UI showed consensus `ACCEPTED`, execution `ERROR`; all 5 validators agreed on rollback: `Only verified eligible bids can win` | Studio transaction dialog screenshot (builder provided 28 Oct 2026); **later confirmed FINALIZED with execution ERROR**; state readback still required |
+| TEST-002 attempted `award` for INELIGIBLE bid | Expected execution rejection observed: UI showed consensus `ACCEPTED`, execution `ERROR`; all 5 validators agreed on rollback: `Only verified eligible bids can win` | [Failed award TX](https://explorer-studio.genlayer.com/tx/0x1f7ed9e5fc20c847e86d825fde2d9881efed93318e4941c35558d20b0cc2c88c) (transcribed from builder-provided Studio screenshot): FINALIZED, execution ERROR; subsequent readback confirmed OPEN |
 | TEST-002 finalized `get_request` after rejected award | `state: OPEN`, `awarded_bidder: 0x0000000000000000000000000000000000000000`; no award persisted | Studio Finalized read response supplied by builder on 28 Oct 2026 |
-| TEST-002 `cancel_request` by non-owner/vendor | FINALIZED with execution ERROR; expected rollback `Only request owner can cancel`; 3 validators Agree and 2 Idle after quorum | GenLayer Studio transaction screenshot submitted by builder on 28 Oct 2026 |
+| TEST-002 `cancel_request` by non-owner/vendor | FINALIZED with execution ERROR; expected rollback `Only request owner can cancel`; 3 validators Agree and 2 Idle after quorum | [Non-owner cancellation TX](https://explorer-studio.genlayer.com/tx/0xaeca7a1c26bf9c43397fd3a7a131f56e56d1d2e803c54b78bdfc345bf15e29f2) (transcribed from builder-provided Studio screenshot, 28 Oct 2026) |
 
 The evaluation was executed in **Normal** mode with **5 initial validators** and **0 rotations**; the supplied explorer view reports `Accepted` consensus, `SUCCESS` execution, and an Equivalence Principle output of `ELIGIBLE`. This supports the actual AI adjudication flow and successful signed buyer-award transaction, **not** every possible attack/consensus disagreement outcome. A finalized-state `get_request` readback has confirmed `AWARDED` and the exact vendor address.
 
