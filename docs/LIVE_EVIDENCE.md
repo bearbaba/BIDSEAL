@@ -28,7 +28,7 @@ This document records blockchain transaction details supplied by the project bui
 | TEST-002 `submit_bid` (vendor) | FINALIZED, GenVM SUCCESS; price 4500, explicit NO hardware warranty | `0x624706106d0bfa8f264b73288f36c22c4a35b589d89925faecc684d081e2af90` |
 | TEST-002 `evaluate_bid` (vendor) | FINALIZED, GenVM SUCCESS, consensus Accepted; return `INELIGIBLE` and Equivalence Principle `INELIGIBLE` | `0x91ff50c6b87e4c06ccf0c801a4c2e0965647ed9e6bee8126d3350a03336530cf` |
 | TEST-002 finalized `get_bid` | `found: true`, `price: 4500`, `decision: INELIGIBLE` | Readback supplied by builder on 28 Oct 2026 |
-| TEST-002 attempted `award` for INELIGIBLE bid | Expected execution rejection observed: UI showed consensus `ACCEPTED`, execution `ERROR`; all 5 validators agreed on rollback: `Only verified eligible bids can win` | Studio transaction dialog screenshot (builder provided 28 Oct 2026); **not shown as FINALIZED**, state readback still required |
+| TEST-002 attempted `award` for INELIGIBLE bid | Expected execution rejection observed: UI showed consensus `ACCEPTED`, execution `ERROR`; all 5 validators agreed on rollback: `Only verified eligible bids can win` | Studio transaction dialog screenshot (builder provided 28 Oct 2026); **later confirmed FINALIZED with execution ERROR**; state readback still required |
 
 The evaluation was executed in **Normal** mode with **5 initial validators** and **0 rotations**; the supplied explorer view reports `Accepted` consensus, `SUCCESS` execution, and an Equivalence Principle output of `ELIGIBLE`. This supports the actual AI adjudication flow and successful signed buyer-award transaction, **not** every possible attack/consensus disagreement outcome. A finalized-state `get_request` readback has confirmed `AWARDED` and the exact vendor address.
 
@@ -44,7 +44,7 @@ The evaluation was executed in **Normal** mode with **5 initial validators** and
 - [x] Confirm `get_request` state `AWARDED` and awarded bidder matches vendor (Studio Finalized readback)
 - [ ] Unauthorized `award` rejected
 - [x] Noncompliant offer receives `INELIGIBLE` on-chain (AI consensus and readback)
-- [x] Attempt to award TEST-002 produced expected execution rollback (`Only verified eligible bids can win`; screenshot shows 5 validator agreements)
+- [x] Attempt to award TEST-002 **FINALIZED with execution ERROR** and expected rollback (`Only verified eligible bids can win`; 5/5 validator agreements)
 - [ ] Confirm finalized `get_request("BIDSEAL-TEST-002")` still returns `state: OPEN` and zero awarded bidder
 - [ ] Authorization negative test from non-owner wallet (e.g. `cancel_request` by vendor); replay/duplicate tests
 - [ ] Demo video and explorer cross-check
