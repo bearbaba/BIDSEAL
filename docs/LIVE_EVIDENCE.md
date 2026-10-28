@@ -1,0 +1,37 @@
+# BIDSEAL V1 — Live Studionet acceptance evidence
+
+This document records blockchain transaction details supplied by the project builder on **28 October 2026**, pending independent explorer cross-check. This is evidence for the **new BIDSEAL V1 instance** (after the address-key bugfix), not the superseded broken instance.
+
+## Contract
+
+- Network: GenLayer Studionet (chain ID `61999`)
+- Contract address: `0x182787964a480e2b76FFD664465fAb23b5f1B8DB`
+- Studio import: https://studio.genlayer.com/?import-contract=0x182787964a480e2b76FFD664465fAb23b5f1B8DB
+- Buyer wallet: `0x4C7cb73aC8F8999af21cfc9fF4cF2333a9508Dcb`
+- Vendor wallet: `0xD6b8A3A5eB329410D9504784812b8569afA8C2aF`
+- Request: `BIDSEAL-TEST-001`
+- Budget: 5000; vendor offered 4800.
+
+## Live checks
+
+| Operation | Outcome | Evidence |
+|---|---|---|
+| Deploy new instance | Contract imported and usable | Studio import above; deployment transaction hash not captured here |
+| `create_request` by buyer | FINALIZED, GenVM SUCCESS, consensus Accepted | Transaction screenshot shared by builder; hash shown beginning `0xcda4f1d384ec806...` |
+| `submit_bid` by vendor | FINALIZED, GenVM SUCCESS, consensus Accepted | `0xb50296ad3aff364af014d9a47665443ac666392b0e922db838ba53b128e9faf4` |
+| `get_bid` view | `found: true`, `price: 4800`, `decision: PENDING` | Studio response supplied by builder |
+| `evaluate_bid` by vendor | FINALIZED, GenVM SUCCESS, consensus Accepted, return `ELIGIBLE` | `0x19318ccc53db6086c85e502332010b3a2d04ab3a0faffd73c1b7bea9214a0251` |
+| Equivalence Principle output | `ELIGIBLE` | Recorded in evaluation transaction details |
+
+The evaluation was executed in **Normal** mode with **5 initial validators** and **0 rotations**; the supplied explorer view reports `Accepted` consensus, `SUCCESS` execution, and an Equivalence Principle output of `ELIGIBLE`. This supports the actual AI adjudication flow, **not** every possible attack/consensus disagreement outcome.
+
+## Required to complete V1 review
+
+- [ ] Confirm `get_bid` from finalized state now returns `decision: ELIGIBLE`
+- [ ] Buyer wallet calls `award("BIDSEAL-TEST-001", "0xD6b8A3A5eB329410D9504784812b8569afA8C2aF")` and captures transaction evidence
+- [ ] Confirm `get_request` state `AWARDED` and awarded bidder matches vendor
+- [ ] Unauthorized `award` rejected
+- [ ] Noncompliant offer is rejected or unverifiable and cannot be awarded
+- [ ] Demo video and explorer cross-check
+
+**Scope:** verifies commitments against procurement requirements. Does **not** transfer funds, enforce delivery, or guarantee external-world fulfillment.
