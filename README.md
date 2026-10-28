@@ -34,18 +34,20 @@ python -m unittest discover -s tests -v
 - **Signed `submit_bid` and `evaluate_bid`:** finalized, GenVM execution successful, consensus Accepted.
 - **AI consensus decision:** `ELIGIBLE` with Equivalence Principle output `ELIGIBLE`.
 - **Read check:** `get_bid` returned `found: true`, `price: 4800`, `decision: PENDING` before evaluation.
-- **Still pending:** final readback of `ELIGIBLE`, buyer-award signed TX, adversarial tests and demo.
+- **Signed buyer `award`:** finalized, GenVM SUCCESS, consensus Accepted; TX `0xe27f457e099218058338338f0594b4f1b25d42c2033e1e77b7278fc24c1a91e1`.
+- **Still pending:** finalized-state `get_request` check for `AWARDED`, negative tests and reviewer demo. A separate `get_bid` readback after evaluation is also recommended.
 - **Full receipts:** [Live evidence and test plan](docs/LIVE_EVIDENCE.md).
 
 ## Studio acceptance checklist
 
-- [ ] New contract deployed on Studionet using Normal (Full Consensus)
-- [ ] BUYER `create_request("BIDSEAL-FIX-001", requirements, 5000)`
-- [ ] VENDOR `submit_bid("BIDSEAL-FIX-001", 4800, terms)`
+- [x] New contract deployed on Studionet using Normal (Full Consensus)
+- [x] BUYER `create_request("BIDSEAL-TEST-001", requirements, 5000)`
+- [x] VENDOR `submit_bid("BIDSEAL-TEST-001", 4800, terms)`
 - [ ] `bid_exists(..., "0x...")` returns true
-- [ ] `get_bid(..., "0x...")` returns `found: true`, `decision: PENDING`
-- [ ] `evaluate_bid` succeeds with actual validator consensus and `ELIGIBLE`
-- [ ] Buyer awards; `get_request` shows `AWARDED`
+- [x] `get_bid(..., "0x...")` returns `found: true`, `decision: PENDING`
+- [x] `evaluate_bid` succeeds with actual validator consensus and `ELIGIBLE`
+- [x] Buyer successfully calls `award` in a signed, finalized transaction
+- [ ] Finalized `get_request` shows `AWARDED` with correct awarded bidder
 - [ ] Unauthorized award, over-budget and contradictory terms are rejected
 
 See [SECURITY.md](SECURITY.md). MIT licensed. **Do not claim production or Season 2 acceptance before live evidence.**
