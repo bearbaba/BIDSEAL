@@ -1,5 +1,5 @@
 # { "Depends": "py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6" }
-"""BIDSEAL v0.2 — source-bounded, consensus-verified procurement bid gate.
+"""BIDSEAL V1 — corrected address-key handling for fresh Studionet deployment.
 
 This is an independent Intelligent Contract, not a payment escrow. The request
 owner awards only bids accepted by independent GenLayer validators.
@@ -17,6 +17,23 @@ def _has_reserved_marker(value: str) -> bool:
     return any(marker in lower for marker in (
         "<buyer_requirements", "</buyer_requirements", "<vendor_offer", "</vendor_offer"
     ))
+
+
+def _address_key(value) -> str:
+    """Canonical key for GenVM sender addresses and Studio text arguments.
+
+    Address display forms can differ across contexts (0x... / addr#...),
+    so all bid storage and lookup uses lowercase 0x-prefixed hex.
+    """
+    raw = str(value)
+    if raw.lower().startswith("addr#"):
+        raw = "0x" + raw[5:]
+    if len(raw) != 42 or raw[:2].lower() != "0x":
+        raise gl.vm.UserError("Invalid bidder address")
+    digits = raw[2:].lower()
+    if not all(ch in "0123456789abcdef" for ch in digits):
+        raise gl.vm.UserError("Invalid bidder address")
+    return "0x" + digits
 
 
 def _decision_from_text(value: str) -> str:
@@ -41,7 +58,7 @@ class Bidseal(gl.Contract):
         pass
 
     def _bid_key(self, request_id: str, bidder: Address) -> str:
-        return request_id + "|" + str(bidder)
+        return request_id + "|" + _address_key(bidder)
 
     @gl.public.write
     def create_request(self, request_id: str, requirements: str, max_price: u256) -> None:
@@ -81,7 +98,7 @@ class Bidseal(gl.Contract):
         self.bid_decision[key] = "PENDING"
 
     @gl.public.write
-    def evaluate_bid(self, request_id: str, bidder: Address) -> str:
+    def evaluate_bid(self, request_id: str, bidder: str) -> str:
         if self.request_state.get(request_id, "") != "OPEN":
             raise gl.vm.UserError("Request not open")
         key = self._bid_key(request_id, bidder)
@@ -130,7 +147,7 @@ class Bidseal(gl.Contract):
         return result
 
     @gl.public.write
-    def award(self, request_id: str, bidder: Address) -> None:
+    def award(self, request_id: str, bidder: str) -> None:
         if self.request_state.get(request_id, "") != "OPEN":
             raise gl.vm.UserError("Request not open")
         if gl.message.sender_address != self.request_owner[request_id]:
@@ -138,7 +155,7 @@ class Bidseal(gl.Contract):
         key = self._bid_key(request_id, bidder)
         if self.bid_decision.get(key, "") != "ELIGIBLE":
             raise gl.vm.UserError("Only verified eligible bids can win")
-        self.request_award[request_id] = bidder
+        self.request_award[request_id] = Address(_address_key(bidder))
         self.request_state[request_id] = "AWARDED"
 
     @gl.public.write
@@ -160,9 +177,16 @@ class Bidseal(gl.Contract):
                 "awarded_bidder": str(self.request_award.get(request_id, Address("0x0000000000000000000000000000000000000000")))}
 
     @gl.public.view
-    def get_bid(self, request_id: str, bidder: Address) -> dict:
+    def bid_exists(self, request_id: str, bidder: str) -> bool:
+        return self._bid_key(request_id, bidder) in self.bid_terms
+
+    @gl.public.view
+    def get_bid(self, request_id: str, bidder: str) -> dict:
         key = self._bid_key(request_id, bidder)
+        normalized = _address_key(bidder)
         if key not in self.bid_terms:
-            raise gl.vm.UserError("Bid not found")
-        return {"bidder": str(bidder), "terms": self.bid_terms[key],
-                "price": self.bid_price[key], "decision": self.bid_decision[key]}
+            return {"found": False, "bidder": normalized,
+                    "terms": "", "price": 0, "decision": "NOT_FOUND"}
+        return {"found": True, "bidder": normalized,
+                "terms": self.bid_terms[key], "price": self.bid_price[key],
+                "decision": self.bid_decision[key]}
