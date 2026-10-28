@@ -29,6 +29,7 @@ This document records blockchain transaction details supplied by the project bui
 | TEST-002 `evaluate_bid` (vendor) | FINALIZED, GenVM SUCCESS, consensus Accepted; return `INELIGIBLE` and Equivalence Principle `INELIGIBLE` | `0x91ff50c6b87e4c06ccf0c801a4c2e0965647ed9e6bee8126d3350a03336530cf` |
 | TEST-002 finalized `get_bid` | `found: true`, `price: 4500`, `decision: INELIGIBLE` | Readback supplied by builder on 28 Oct 2026 |
 | TEST-002 attempted `award` for INELIGIBLE bid | Expected execution rejection observed: UI showed consensus `ACCEPTED`, execution `ERROR`; all 5 validators agreed on rollback: `Only verified eligible bids can win` | Studio transaction dialog screenshot (builder provided 28 Oct 2026); **later confirmed FINALIZED with execution ERROR**; state readback still required |
+| TEST-002 finalized `get_request` after rejected award | `state: OPEN`, `awarded_bidder: 0x0000000000000000000000000000000000000000`; no award persisted | Studio Finalized read response supplied by builder on 28 Oct 2026 |
 
 The evaluation was executed in **Normal** mode with **5 initial validators** and **0 rotations**; the supplied explorer view reports `Accepted` consensus, `SUCCESS` execution, and an Equivalence Principle output of `ELIGIBLE`. This supports the actual AI adjudication flow and successful signed buyer-award transaction, **not** every possible attack/consensus disagreement outcome. A finalized-state `get_request` readback has confirmed `AWARDED` and the exact vendor address.
 
@@ -45,7 +46,7 @@ The evaluation was executed in **Normal** mode with **5 initial validators** and
 - [ ] Unauthorized `award` rejected
 - [x] Noncompliant offer receives `INELIGIBLE` on-chain (AI consensus and readback)
 - [x] Attempt to award TEST-002 **FINALIZED with execution ERROR** and expected rollback (`Only verified eligible bids can win`; 5/5 validator agreements)
-- [ ] Confirm finalized `get_request("BIDSEAL-TEST-002")` still returns `state: OPEN` and zero awarded bidder
+- [x] Finalized `get_request("BIDSEAL-TEST-002")` returned `state: OPEN`, zero awarded bidder, owner `0x4C7cb73aC8F8999af21cfc9fF4cF2333a9508Dcb`, and budget 5000 (Studio readback supplied by builder on 28 Oct 2026)
 - [ ] Authorization negative test from non-owner wallet (e.g. `cancel_request` by vendor); replay/duplicate tests
 - [ ] Demo video and explorer cross-check
 
