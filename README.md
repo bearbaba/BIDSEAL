@@ -38,7 +38,8 @@ python -m unittest discover -s tests -v
 - **Finalized-state readback:** `get_request("BIDSEAL-TEST-001")` returned `AWARDED` with awarded bidder `0xD6b8A3A5eB329410D9504784812b8569afA8C2aF` (builder-provided Studio response).
 - **Negative AI adjudication:** TEST-002 vendor price 4500 with explicit refusal of 12-month warranty → `INELIGIBLE` (finalized, GenVM SUCCESS, consensus Accepted, Equivalence output `INELIGIBLE`; finalized `get_bid` confirms persisted state).
 - **Rejected award gate:** attempt to `award` TEST-002 produced expected `ERROR` with `[rollback] Only verified eligible bids can win`; all 5 validators agreed in the supplied Studio transaction dialog (**ACCEPTED**, not displayed as FINALIZED).
-- **Still pending:** confirm TEST-002 remains `OPEN`, unauthorized call checks, over-budget deterministic check, reviewer demo, and a separate TEST-001 `get_bid` readback after evaluation.
+- **State preservation confirmed:** after the rejected TEST-002 award, finalized `get_request` returned `OPEN` and zero awarded bidder.
+- **Still pending:** negative ownership check (vendor attempts `cancel_request`), over-budget deterministic check, reviewer demo, and optional TEST-001 post-evaluation readback.
 - **Full receipts:** [Live evidence and test plan](docs/LIVE_EVIDENCE.md).
 
 ## Studio acceptance checklist
@@ -53,6 +54,7 @@ python -m unittest discover -s tests -v
 - [x] Finalized `get_request` shows `AWARDED` with correct awarded bidder
 - [x] TEST-002 contradictory warranty terms evaluated `INELIGIBLE` with signed consensus and finalized readback
 - [x] TEST-002 attempted award rejected with expected execution rollback (Studio screenshot)
-- [ ] Confirm TEST-002 unchanged (`OPEN`) after rejected award; unauthorized calls and over-budget checks
+- [x] Confirm TEST-002 remains `OPEN` with zero awarded bidder after rejected award
+- [ ] Unauthorized calls and over-budget checks
 
 See [SECURITY.md](SECURITY.md). MIT licensed. **Do not claim production or Season 2 acceptance before live evidence.**
