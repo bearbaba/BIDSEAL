@@ -22,13 +22,14 @@ This document records blockchain transaction details supplied by the project bui
 | `get_bid` view | `found: true`, `price: 4800`, `decision: PENDING` | Studio response supplied by builder |
 | `evaluate_bid` by vendor | FINALIZED, GenVM SUCCESS, consensus Accepted, return `ELIGIBLE` | `0x19318ccc53db6086c85e502332010b3a2d04ab3a0faffd73c1b7bea9214a0251` |
 | Equivalence Principle output | `ELIGIBLE` | Recorded in evaluation transaction details |
+| `award` by original buyer | FINALIZED, GenVM SUCCESS, consensus Accepted; input bidder matches evaluated vendor | `0xe27f457e099218058338338f0594b4f1b25d42c2033e1e77b7278fc24c1a91e1` (buyer `0x4C7cb73aC8F8999af21cfc9fF4cF2333a9508Dcb`; 2026-10-28 19:41:55 local) |
 
-The evaluation was executed in **Normal** mode with **5 initial validators** and **0 rotations**; the supplied explorer view reports `Accepted` consensus, `SUCCESS` execution, and an Equivalence Principle output of `ELIGIBLE`. This supports the actual AI adjudication flow, **not** every possible attack/consensus disagreement outcome.
+The evaluation was executed in **Normal** mode with **5 initial validators** and **0 rotations**; the supplied explorer view reports `Accepted` consensus, `SUCCESS` execution, and an Equivalence Principle output of `ELIGIBLE`. This supports the actual AI adjudication flow and successful signed buyer-award transaction, **not** every possible attack/consensus disagreement outcome. An independent finalized-state read of `AWARDED` is still required.
 
 ## Required to complete V1 review
 
 - [ ] Confirm `get_bid` from finalized state now returns `decision: ELIGIBLE`
-- [ ] Buyer wallet calls `award("BIDSEAL-TEST-001", "0xD6b8A3A5eB329410D9504784812b8569afA8C2aF")` and captures transaction evidence
+- [x] Buyer wallet called `award("BIDSEAL-TEST-001", "0xD6b8A3A5eB329410D9504784812b8569afA8C2aF")`; signed call finalized and returned success (TX above)
 - [ ] Confirm `get_request` state `AWARDED` and awarded bidder matches vendor
 - [ ] Unauthorized `award` rejected
 - [ ] Noncompliant offer is rejected or unverifiable and cannot be awarded
