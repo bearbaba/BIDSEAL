@@ -1,52 +1,42 @@
 # BIDSEAL — Intelligent Procurement Verification
 
-**Standalone GenLayer Intelligent Contract primitive · Season 2 candidate (v0.2)**
+**BIDSEAL V1 — fresh deployment source (address-key fix, 28 October 2026)**
 
-A buyer publishes immutable procurement requirements, vendors commit to signed bids, and independent GenLayer AI validators determine which bids satisfy the requirements. The buyer can award only a verified eligible offer.
+Standalone Intelligent Contract on GenLayer: a buyer publishes mandatory procurement requirements, a second wallet submits a binding bid, independent AI validators evaluate compliance, and only an `ELIGIBLE` bid can be awarded by the buyer. No escrow or payment functionality.
 
-## What it does
+## Workflow
 
-1. `create_request(request_id, requirements, max_price)` — owner fixes a procurement specification.
-2. `submit_bid(request_id, price, terms)` — a different wallet submits one immutable offer.
-3. `evaluate_bid(request_id, bidder)` — deterministic budget check, then AI consensus compares binding obligations.
-4. `award(request_id, bidder)` — restricted to request owner and bids adjudicated `ELIGIBLE`.
-5. `get_request` and `get_bid` expose auditable state.
+1. `create_request(request_id, requirements, max_price)` from BUYER.
+2. `submit_bid(request_id, price, terms)` from a different wallet (VENDOR).
+3. `bid_exists(request_id, bidder)` or `get_bid(request_id, bidder)` — **bidder is a string** containing the 42-character `0x` address, case-insensitive.
+4. `evaluate_bid(request_id, bidder)` — **bidder is the same string**. Evaluates by LLM consensus, then records `ELIGIBLE`, `INELIGIBLE` or `UNVERIFIABLE`.
+5. `award(request_id, bidder)` — buyer-only, accepted bids only. Read status using `get_request`.
 
-Decisions: **ELIGIBLE**, **INELIGIBLE**, **UNVERIFIABLE**.
+`get_bid` returns `found: false` and `NOT_FOUND` when no bid exists, instead of raising an opaque RPC error.
 
-### Example
+## V1 correction
 
-Buyer asks for 20 refurbished laptops with 16 GB RAM, a 12-month warranty, English support, and 14-day delivery, under $5,000. A bid explicitly meeting all conditions may become eligible. A cheaper bid excluding the warranty is ineligible. An ambiguous warranty is unverifiable. Over-budget bids fail deterministically.
+The first deployment showed successful signed `submit_bid` but a generic `gen_call: execution failed` on `get_bid` and `evaluate_bid` simulation. Exact low-level GenVM cause remains unconfirmed. This build standardizes the storage key from both wallet sender and text input to lowercase `0x...`, including GenVM `addr#...` display strings. Regression tests cover both spellings.
 
-## Why GenLayer consensus
+**Deploy a NEW instance from this file.** This replaces the broken V1 in the project workflow. Do not use `Upgrade code`: the prior contract did not register authorized upgraders, and a source change does not modify that deployed address.
 
-Natural-language exceptions and contradictory commitments cannot be safely reduced to a numeric rule. The leader evaluates the buyer's requirements against the vendor's offer; each validator independently re-runs the decision process and agrees on the outcome label. The bidder's text is untrusted evidence, not instructions. Ambiguous or unavailable evaluation fails closed to `UNVERIFIABLE`.
-
-## Security & limitations
-
-- Request and vendor commitments are immutable.
-- Sender wallet determines ownership; textual claims of authority are ignored.
-- No payment, escrow, or proof of delivery; this contract verifies **promises**, not performance.
-- Never interpret prompt delimiters as a guarantee of prompt-injection resistance.
-- AI disagreement, ambiguous evidence and on-chain finalization semantics require live GenVM testing.
-
-## Run local tests
+## Tests
 
 ```bash
 python -m unittest discover -s tests -v
 ```
 
-**Local shim regression status: 16/16 passed on 2026-10-28.** These are pure-Python simulated tests, **not** GenVM compilation, deployment, validator consensus or signed blockchain transactions.
+20 local Python-shim tests are provided (16 original + 4 address regressions). **Simulated tests are not equivalent to GenVM lint, live deployment, wallet-signed transactions, or validator consensus.** Run `genvm-lint check contracts/bidseal.py` when the tool is available.
 
-## Evidence required before Portal submission
+## Studio acceptance checklist
 
-- [ ] GenVM lint/compile and pinned runtime
-- [ ] Deploy on an appropriate GenLayer network
-- [ ] Signed request, bids, evaluation and award, with explorer TX links
-- [ ] Negative cases: over-budget, unauthorized award, ambiguous offer
-- [ ] Validator disagreement/consensus evidence
-- [ ] Short reviewer video and independently verifiable explorer contract
+- [ ] New contract deployed on Studionet using Normal (Full Consensus)
+- [ ] BUYER `create_request("BIDSEAL-FIX-001", requirements, 5000)`
+- [ ] VENDOR `submit_bid("BIDSEAL-FIX-001", 4800, terms)`
+- [ ] `bid_exists(..., "0x...")` returns true
+- [ ] `get_bid(..., "0x...")` returns `found: true`, `decision: PENDING`
+- [ ] `evaluate_bid` succeeds with actual validator consensus and `ELIGIBLE`
+- [ ] Buyer awards; `get_request` shows `AWARDED`
+- [ ] Unauthorized award, over-budget and contradictory terms are rejected
 
-**Current status:** Source candidate; no chain deployment or live consensus proof yet. Do not describe this as production-ready.
-
-MIT License. Please review [SECURITY.md](SECURITY.md) before integrating.
+See [SECURITY.md](SECURITY.md). MIT licensed. **Do not claim production or Season 2 acceptance before live evidence.**
