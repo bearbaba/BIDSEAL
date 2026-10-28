@@ -15,7 +15,9 @@ BIDSEAL V1 is a standalone GenLayer Intelligent Contract for procurement decisio
 3. **AI verdict — ELIGIBLE:** https://explorer-studio.genlayer.com/tx/0x19318ccc53db6086c85e502332010b3a2d04ab3a0faffd73c1b7bea9214a0251
 4. **AI verdict — INELIGIBLE:** https://explorer-studio.genlayer.com/tx/0x91ff50c6b87e4c06ccf0c801a4c2e0965647ed9e6bee8126d3350a03336530cf
 5. **Award SUCCESS:** https://explorer-studio.genlayer.com/tx/0xe27f457e099218058338338f0594b4f1b25d42c2033e1e77b7278fc24c1a91e1
-6. **Reviewer guide:** https://github.com/bearbaba/BIDSEAL/blob/main/REVIEWER.md
+6. **Rejected award TX (expected rollback):** https://explorer-studio.genlayer.com/tx/0x1f7ed9e5fc20c847e86d825fde2d9881efed93318e4941c35558d20b0cc2c88c
+7. **Unauthorized cancellation TX (expected rollback):** https://explorer-studio.genlayer.com/tx/0xaeca7a1c26bf9c43397fd3a7a131f56e56d1d2e803c54b78bdfc345bf15e29f2
+8. **Reviewer guide:** https://github.com/bearbaba/BIDSEAL/blob/main/REVIEWER.md
 
 If the Portal only accepts a few evidence links, prioritize **explorer contract + GitHub + both evaluation TX links**. Add a concise video link only after one is actually recorded.
 
