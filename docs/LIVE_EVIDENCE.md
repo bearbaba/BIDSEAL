@@ -24,8 +24,17 @@ This document records blockchain transaction details supplied by the project bui
 | Equivalence Principle output | `ELIGIBLE` | Recorded in evaluation transaction details |
 | `award` by original buyer | FINALIZED, GenVM SUCCESS, consensus Accepted; input bidder matches evaluated vendor | `0xe27f457e099218058338338f0594b4f1b25d42c2033e1e77b7278fc24c1a91e1` (buyer `0x4C7cb73aC8F8999af21cfc9fF4cF2333a9508Dcb`; 2026-10-28 19:41:55 local) |
 | Finalized `get_request` readback after award | `state: AWARDED`; `awarded_bidder: 0xD6b8A3A5eB329410D9504784812b8569afA8C2aF`; owner and budget match | Studio response provided by builder on 28 Oct 2026; read call TX not applicable |
+| TEST-002 `create_request` (buyer) | FINALIZED, GenVM SUCCESS, consensus Accepted; mandatory 12-month warranty, max price 5000 | `0x814808648593fe47d6d8d31c09894f83e826af97017cc3ebb719c5397c8bec72` |
+| TEST-002 `submit_bid` (vendor) | FINALIZED, GenVM SUCCESS; price 4500, explicit NO hardware warranty | `0x624706106d0bfa8f264b73288f36c22c4a35b589d89925faecc684d081e2af90` |
+| TEST-002 `evaluate_bid` (vendor) | FINALIZED, GenVM SUCCESS, consensus Accepted; return `INELIGIBLE` and Equivalence Principle `INELIGIBLE` | `0x91ff50c6b87e4c06ccf0c801a4c2e0965647ed9e6bee8126d3350a03336530cf` |
+| TEST-002 finalized `get_bid` | `found: true`, `price: 4500`, `decision: INELIGIBLE` | Readback supplied by builder on 28 Oct 2026 |
 
 The evaluation was executed in **Normal** mode with **5 initial validators** and **0 rotations**; the supplied explorer view reports `Accepted` consensus, `SUCCESS` execution, and an Equivalence Principle output of `ELIGIBLE`. This supports the actual AI adjudication flow and successful signed buyer-award transaction, **not** every possible attack/consensus disagreement outcome. A finalized-state `get_request` readback has confirmed `AWARDED` and the exact vendor address.
+
+## Two contrasting live AI judgments
+
+- **TEST-001 (compliant offer):** price 4800; all mandatory terms explicitly committed; AI verdict `ELIGIBLE`; buyer award finalized; state readback `AWARDED`.
+- **TEST-002 (noncompliant offer):** price 4500; express warranty refusal; AI verdict `INELIGIBLE`; finalized view confirms persisted decision. This demonstrates that the AI decision gate is not merely a price comparison.
 
 ## Required to complete V1 review
 
@@ -33,7 +42,9 @@ The evaluation was executed in **Normal** mode with **5 initial validators** and
 - [x] Buyer wallet called `award("BIDSEAL-TEST-001", "0xD6b8A3A5eB329410D9504784812b8569afA8C2aF")`; signed call finalized and returned success (TX above)
 - [x] Confirm `get_request` state `AWARDED` and awarded bidder matches vendor (Studio Finalized readback)
 - [ ] Unauthorized `award` rejected
-- [ ] Noncompliant offer is rejected or unverifiable and cannot be awarded
+- [x] Noncompliant offer receives `INELIGIBLE` on-chain (AI consensus and readback)
+- [ ] Attempt to award TEST-002 is rejected and request remains `OPEN`
+- [ ] Unauthorized cancellation/award and replay/duplicate attempts rejected
 - [ ] Demo video and explorer cross-check
 
 **Scope:** verifies commitments against procurement requirements. Does **not** transfer funds, enforce delivery, or guarantee external-world fulfillment.
