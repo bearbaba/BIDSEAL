@@ -37,9 +37,10 @@ python -m unittest discover -s tests -v
 - **Signed buyer `award`:** finalized, GenVM SUCCESS, consensus Accepted; TX `0xe27f457e099218058338338f0594b4f1b25d42c2033e1e77b7278fc24c1a91e1`.
 - **Finalized-state readback:** `get_request("BIDSEAL-TEST-001")` returned `AWARDED` with awarded bidder `0xD6b8A3A5eB329410D9504784812b8569afA8C2aF` (builder-provided Studio response).
 - **Negative AI adjudication:** TEST-002 vendor price 4500 with explicit refusal of 12-month warranty → `INELIGIBLE` (finalized, GenVM SUCCESS, consensus Accepted, Equivalence output `INELIGIBLE`; finalized `get_bid` confirms persisted state).
-- **Rejected award gate:** attempt to `award` TEST-002 produced expected `ERROR` with `[rollback] Only verified eligible bids can win`; all 5 validators agreed in the supplied Studio transaction dialog (**ACCEPTED**, not displayed as FINALIZED).
+- **Rejected award gate:** attempt to `award` TEST-002 produced expected `ERROR` with `[rollback] Only verified eligible bids can win`; all 5 validators agreed in the supplied Studio transaction dialog (**FINALIZED** with execution ERROR on follow-up screenshot).
 - **State preservation confirmed:** after the rejected TEST-002 award, finalized `get_request` returned `OPEN` and zero awarded bidder.
-- **Still pending:** negative ownership check (vendor attempts `cancel_request`), over-budget deterministic check, reviewer demo, and optional TEST-001 post-evaluation readback.
+- **Authorization:** vendor/non-owner `cancel_request` was finalized with expected execution rollback `Only request owner can cancel`; 3 validator agreements, 2 idle after quorum.
+- **Still pending:** over-budget and duplicate-bid test coverage, reviewer demo, and optional TEST-001 post-evaluation readback.
 - **Full receipts:** [Live evidence and test plan](docs/LIVE_EVIDENCE.md).
 
 ## Studio acceptance checklist
@@ -55,6 +56,7 @@ python -m unittest discover -s tests -v
 - [x] TEST-002 contradictory warranty terms evaluated `INELIGIBLE` with signed consensus and finalized readback
 - [x] TEST-002 attempted award rejected with expected execution rollback (Studio screenshot)
 - [x] Confirm TEST-002 remains `OPEN` with zero awarded bidder after rejected award
-- [ ] Unauthorized calls and over-budget checks
+- [x] Non-owner cancellation rejected by contract with validator agreement
+- [ ] Over-budget and duplicate-bid checks
 
 See [SECURITY.md](SECURITY.md). MIT licensed. **Do not claim production or Season 2 acceptance before live evidence.**
