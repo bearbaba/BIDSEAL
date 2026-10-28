@@ -28,6 +28,15 @@ python -m unittest discover -s tests -v
 
 20 local Python-shim tests are provided (16 original + 4 address regressions). **Simulated tests are not equivalent to GenVM lint, live deployment, wallet-signed transactions, or validator consensus.** Run `genvm-lint check contracts/bidseal.py` when the tool is available.
 
+## Current on-chain status (28 October 2026)
+
+- **BIDSEAL V1 active contract:** `0x182787964a480e2b76FFD664465fAb23b5f1B8DB` on Studionet.
+- **Signed `submit_bid` and `evaluate_bid`:** finalized, GenVM execution successful, consensus Accepted.
+- **AI consensus decision:** `ELIGIBLE` with Equivalence Principle output `ELIGIBLE`.
+- **Read check:** `get_bid` returned `found: true`, `price: 4800`, `decision: PENDING` before evaluation.
+- **Still pending:** final readback of `ELIGIBLE`, buyer-award signed TX, adversarial tests and demo.
+- **Full receipts:** [Live evidence and test plan](docs/LIVE_EVIDENCE.md).
+
 ## Studio acceptance checklist
 
 - [ ] New contract deployed on Studionet using Normal (Full Consensus)
